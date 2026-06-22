@@ -7,7 +7,10 @@
     <style>
         body, html { margin:0; padding:0; height:100%; font-family: Arial, sans-serif; }
         .header { padding:20px; background:#0F172A; color:white; text-align:center; font-size:24px; font-weight:bold; }
-        iframe { width:100%; height:calc(100vh - 70px); border:none; }
+        .tabs { padding:15px; background:#f1f5f9; text-align:center; overflow-x:auto; white-space:nowrap; }
+        .tab-btn { margin:5px; padding:12px 24px; background:#C9A227; color:white; border:none; border-radius:8px; cursor:pointer; font-weight:bold; }
+        .tab-btn.active { background:#0F172A; color:#C9A227; }
+        iframe { width:100%; height:calc(100vh - 140px); border:none; }
     </style>
 </head>
 <body>
@@ -15,6 +18,77 @@
         Mister Tuxedo - Wedding Portal
     </div>
     
-    <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vQvuBsEBtbigks43L98FinwZM70uM9iMzbpzBv40guW9Sso4rVfvp10OeVmQZIpUHPSGIgVtz07bffm/pubhtml?widget=true&amp;headers=false"></iframe>
+    <div class="tabs" id="tabs"></div>
+    
+    <iframe id="frame" src=""></iframe>
+
+    <script>
+        const API_KEY = "AIzaSyCEoZRtTKBA5ICMIwATMOKCpx7rNr-k104";
+        const SPREADSHEET_ID = "1T3wznvxT6l5TdCljmDpubGjD_P4zAQBer0AmBReqzWs";
+
+        // Use the published embed format (more reliable for public viewing)
+        const PUBLISHED_EMBED = "2PACX-1vQvuBsEBtbigks43L98FinwZM70uM9iMzbpzBv40guW9Sso4rVfvp10OeVmQZIpUHPSGIgVtz07bffm";
+
+        async function loadAllSheets() {
+            const tabsContainer = document.getElementById('tabs');
+            const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}?key=${API_KEY}`;
+
+            try {
+                const res = await fetch(url);
+                const data = await res.json();
+
+                if (!data.sheets || data.sheets.length === 0) {
+                    tabsContainer.innerHTML = '<p style="padding:20px;">No sheets found.</p>';
+                    return;
+                }
+
+                let firstBtn = null;
+                let firstGid = null;
+
+                data.sheets.forEach((sheet) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'tab-btn';
+                    btn.textContent = sheet.properties.title;
+                    btn.onclick = () => loadSheet(sheet.properties.sheetId, btn);
+                    tabsContainer.appendChild(btn);
+
+                    if (!firstBtn) {
+                        firstBtn = btn;
+                        firstGid = sheet.properties.sheetId;
+                    }
+                });
+
+                // Load the first sheet after all buttons exist
+                if (firstBtn && firstGid != null) {
+                    firstBtn.classList.add('active');
+                    loadSheet(firstGid, firstBtn);
+                }
+            } catch (e) {
+                tabsContainer.innerHTML = '<p style="color:red; padding:20px;">Error loading sheets. Check API key or internet.</p>';
+                console.error(e);
+            }
+        }
+
+        function loadSheet(gid, btn) {
+            const iframe = document.getElementById('frame');
+            // Use the published embed URL + the correct gid
+            const newSrc = `https://docs.google.com/spreadsheets/d/e/${PUBLISHED_EMBED}/pubhtml?gid=${gid}&single=true&widget=true&headers=false&ts=${Date.now()}`;
+
+            console.log('Loading gid:', gid, 'src:', newSrc);
+
+            // Force the iframe to actually change by blanking it first
+            iframe.src = 'about:blank';
+            setTimeout(() => {
+                iframe.src = newSrc;
+            }, 40);
+
+            // Active tab styling
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+        }
+
+        // Start loading tabs dynamically
+        loadAllSheets();
+    </script>
 </body>
 </html>
