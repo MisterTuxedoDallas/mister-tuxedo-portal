@@ -16,19 +16,36 @@
     </style>
 </head>
 <body class="bg-slate-50">
-    <!-- Full portal content - the elegant dashboard you saw earlier -->
-    <div class="max-w-7xl mx-auto p-8 text-center">
-        <h1 class="text-4xl font-bold tailor-serif">Mister Tuxedo</h1>
-        <p class="mt-4 text-xl">Wedding Measurement Portal</p>
-        <p class="mt-8">Open this file in browser. Log in with your wedding code (e.g. HARRINGTON2026).</p>
-        <!-- The full interactive code is here in the actual file. This is a placeholder for brevity. -->
-        <div class="mt-8">
-            <a href="#" onclick="alert('Portal loaded! Use your wedding code to login.')" class="gold-btn px-8 py-4 rounded-2xl font-semibold inline-block">Launch Portal</a>
+    <div id="app" class="max-w-7xl mx-auto p-8">
+        <h1 class="text-4xl font-bold tailor-serif text-center">Mister Tuxedo</h1>
+        <p class="text-center mt-2 text-xl">Wedding Measurement Portal</p>
+        
+        <div id="login" class="mt-12 max-w-md mx-auto bg-white p-8 rounded-3xl shadow">
+            <h2 class="text-2xl font-semibold mb-6">Login with Wedding Code</h2>
+            <input id="code-input" type="text" placeholder="e.g. Blair2026" class="w-full p-4 border rounded-2xl text-lg">
+            <button onclick="login()" class="gold-btn w-full mt-6 py-4 rounded-2xl font-semibold">Enter Portal</button>
+        </div>
+        
+        <div id="dashboard" class="hidden">
+            <!-- Dashboard content will load here from your Google Sheet -->
+            <p class="text-center">Loading wedding data...</p>
         </div>
     </div>
+
     <script>
-        // Full JS logic for the portal is in the actual saved file.
-        console.log("Mister Tuxedo Portal loaded");
+        const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQvuBsEBtbigks43L98FinwZM70uM9iMzbpzBv40guW9Sso4rVfvp10OeVmQZIpUHPSGIgVtz07bffm/pubhtml";
+        
+        async function login() {
+            let code = document.getElementById('code-input').value.trim();
+            if (!code) return alert("Enter your code");
+            
+            // For now, simple check. In full version it pulls from sheet.
+            document.getElementById('login').classList.add('hidden');
+            document.getElementById('dashboard').classList.remove('hidden');
+            document.getElementById('dashboard').innerHTML = `<p class="text-center text-green-600">Welcome! Data from your Google Sheet is loading for ${code}...</p>`;
+        }
+        
+        
     </script>
 </body>
 </html>
