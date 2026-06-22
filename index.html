@@ -4,48 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mister Tuxedo Portal</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;500;600&display=swap');
-        body { font-family: 'Inter', system-ui, sans-serif; }
-        .tailor-serif { font-family: 'Playfair Display', Georgia, serif; }
-        .premium-nav { background: linear-gradient(to right, #0F172A, #1E2937); }
-        .gold-btn { background-color: #C9A227; color: white; }
-        .gold-btn:hover { background-color: #A68B1A; }
+        body, html { margin:0; padding:0; height:100%; font-family: Arial, sans-serif; }
+        .header { padding:20px; background:#0F172A; color:white; text-align:center; font-size:24px; font-weight:bold; }
+        iframe { width:100%; height:calc(100vh - 70px); border:none; }
     </style>
 </head>
-<body class="bg-slate-50">
-    <div id="app" class="max-w-7xl mx-auto p-8">
-        <h1 class="text-4xl font-bold tailor-serif text-center">Mister Tuxedo</h1>
-        <p class="text-center mt-2 text-xl">Wedding Measurement Portal</p>
-        
-        <div id="login" class="mt-12 max-w-md mx-auto bg-white p-8 rounded-3xl shadow">
-            <h2 class="text-2xl font-semibold mb-6">Login with Wedding Code</h2>
-            <input id="code-input" type="text" placeholder="e.g. Blair2026" class="w-full p-4 border rounded-2xl text-lg">
-            <button onclick="login()" class="gold-btn w-full mt-6 py-4 rounded-2xl font-semibold">Enter Portal</button>
-        </div>
-        
-        <div id="dashboard" class="hidden">
-            <!-- Dashboard content will load here from your Google Sheet -->
-            <p class="text-center">Loading wedding data...</p>
-        </div>
+<body>
+    <div class="header">
+        Mister Tuxedo - Wedding Portal
     </div>
-
-    <script>
-        const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQvuBsEBtbigks43L98FinwZM70uM9iMzbpzBv40guW9Sso4rVfvp10OeVmQZIpUHPSGIgVtz07bffm/pubhtml";
-        
-        async function login() {
-            let code = document.getElementById('code-input').value.trim();
-            if (!code) return alert("Enter your code");
-            
-            // For now, simple check. In full version it pulls from sheet.
-            document.getElementById('login').classList.add('hidden');
-            document.getElementById('dashboard').classList.remove('hidden');
-            document.getElementById('dashboard').innerHTML = `<p class="text-center text-green-600">Welcome! Data from your Google Sheet is loading for ${code}...</p>`;
-        }
-        
-        
-    </script>
+    
+    <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vQvuBsEBtbigks43L98FinwZM70uM9iMzbpzBv40guW9Sso4rVfvp10OeVmQZIpUHPSGIgVtz07bffm/pubhtml?widget=true&amp;headers=false"></iframe>
 </body>
 </html>
