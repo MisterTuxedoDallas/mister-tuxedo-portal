@@ -3,92 +3,393 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mister Tuxedo Portal</title>
+    <title>Mister Tuxedo - Wedding Portal</title>
     <style>
-        body, html { margin:0; padding:0; height:100%; font-family: Arial, sans-serif; }
-        .header { padding:20px; background:#0F172A; color:white; text-align:center; font-size:24px; font-weight:bold; }
-        .tabs { padding:15px; background:#f1f5f9; text-align:center; overflow-x:auto; white-space:nowrap; }
-        .tab-btn { margin:5px; padding:12px 24px; background:#C9A227; color:white; border:none; border-radius:8px; cursor:pointer; font-weight:bold; }
-        .tab-btn.active { background:#0F172A; color:#C9A227; }
-        iframe { width:100%; height:calc(100vh - 140px); border:none; }
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&amp;family=Inter:wght@400;500;600&amp;display=swap');
+
+        :root {
+            --navy: #0F172A;
+            --gold: #C9A227;
+        }
+
+        * { box-sizing: border-box; }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: #f8fafc;
+            color: #1e2937;
+        }
+
+        .logo {
+            max-width: 220px;
+            height: auto;
+            margin-bottom: 12px;
+        }
+
+        /* === LOGIN SCREEN === */
+        #login-screen {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .selector-header {
+            margin-bottom: 40px;
+        }
+
+        .selector-header h1 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 42px;
+            color: var(--navy);
+            margin: 8px 0 8px;
+            font-weight: 700;
+        }
+
+        .selector-header p {
+            color: #64748b;
+            font-size: 18px;
+            margin: 0;
+        }
+
+        .login-box {
+            background: white;
+            border-radius: 16px;
+            padding: 32px 28px;
+            max-width: 340px;
+            width: 100%;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            text-align: left;
+        }
+
+        .login-box h3 {
+            margin: 0 0 8px;
+            color: var(--navy);
+            font-size: 22px;
+            text-align: center;
+        }
+
+        .login-box .login-hint {
+            font-size: 14px;
+            color: #64748b;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 14px;
+            font-size: 16px;
+            border: 2px solid #cbd5e1;
+            border-radius: 10px;
+            margin-bottom: 12px;
+        }
+
+        .login-box input:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+
+        .btn-primary {
+            width: 100%;
+            background: var(--gold);
+            color: white;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        .btn-primary:hover {
+            background: #a68b1a;
+        }
+
+        /* === VIEWER SCREEN === */
+        #viewer-screen {
+            display: none;
+            flex-direction: column;
+            height: 100vh;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 50;
+            background: #f8fafc;
+        }
+
+        .viewer-header {
+            background: var(--navy);
+            color: white;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
+
+        .viewer-header .left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .viewer-header .back-btn {
+            background: #334155;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .viewer-header .back-btn:hover {
+            background: #475569;
+        }
+
+        .viewer-header .current {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .viewer-header .current span {
+            color: var(--gold);
+        }
+
+        iframe {
+            flex: 1;
+            width: 100%;
+            border: none;
+            background: white;
+        }
+
+        .error {
+            color: #dc2626;
+            font-size: 13px;
+            margin-top: 8px;
+            min-height: 18px;
+            text-align: center;
+        }
+
+        .loading {
+            color: #64748b;
+            padding: 12px 0;
+            font-size: 14px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
-    <div class="header">
-        Mister Tuxedo - Wedding Portal
+
+    <!-- LOGIN SCREEN -->
+    <div id="login-screen">
+        <div class="selector-header">
+            <img src="mister-tuxedo-logo.png" alt="Mister Tuxedo Logo" class="logo">
+            <h1>Mister Tuxedo</h1>
+            <p>Wedding Measurement Portal</p>
+        </div>
+
+        <div class="login-box">
+            <h3>Sign In</h3>
+            <p class="login-hint">Enter your <strong>last name</strong> and password <strong>2026</strong></p>
+
+            <input type="text" id="username-input" placeholder="Last name (e.g. Blair)" autocomplete="username">
+            <input type="password" id="password-input" placeholder="Password" value="2026" autocomplete="current-password">
+
+            <button id="login-btn" class="btn-primary">Access Sheet</button>
+            <div class="error" id="login-error"></div>
+
+            <div class="loading" id="login-loading" style="display:none; padding:10px 0;">Loading sheets...</div>
+        </div>
     </div>
-    
-    <div class="tabs" id="tabs"></div>
-    
-    <iframe id="frame" src=""></iframe>
+
+    <!-- VIEWER SCREEN -->
+    <div id="viewer-screen">
+        <div class="viewer-header">
+            <div class="left">
+                <button class="back-btn" onclick="goBackToLogin()">← Logout</button>
+                <div class="current">Viewing: <span id="current-sheet-name"></span></div>
+            </div>
+        </div>
+        <iframe id="sheet-frame" src=""></iframe>
+    </div>
+
+
 
     <script>
+        // ==================== CONFIGURATION ====================
         const API_KEY = "AIzaSyCEoZRtTKBA5ICMIwATMOKCpx7rNr-k104";
         const SPREADSHEET_ID = "1T3wznvxT6l5TdCljmDpubGjD_P4zAQBer0AmBReqzWs";
-
-        // Use the published embed format (more reliable for public viewing)
         const PUBLISHED_EMBED = "2PACX-1vQvuBsEBtbigks43L98FinwZM70uM9iMzbpzBv40guW9Sso4rVfvp10OeVmQZIpUHPSGIgVtz07bffm";
 
-        async function loadAllSheets() {
-            const tabsContainer = document.getElementById('tabs');
+        // ==================== STATE ====================
+        let allSheets = []; // [{title, gid}]
+        let currentSheet = null;
+
+        // ==================== DOM ELEMENTS ====================
+        const loginScreen = document.getElementById('login-screen');
+        const viewerScreen = document.getElementById('viewer-screen');
+        const usernameInput = document.getElementById('username-input');
+        const passwordInput = document.getElementById('password-input');
+        const loginBtn = document.getElementById('login-btn');
+        const loginError = document.getElementById('login-error');
+        const loginLoading = document.getElementById('login-loading');
+        const currentSheetNameEl = document.getElementById('current-sheet-name');
+        const iframe = document.getElementById('sheet-frame');
+
+        // ==================== FETCH SHEETS ====================
+        async function loadSheets() {
             const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}?key=${API_KEY}`;
+
+            loginLoading.style.display = 'block';
 
             try {
                 const res = await fetch(url);
                 const data = await res.json();
 
                 if (!data.sheets || data.sheets.length === 0) {
-                    tabsContainer.innerHTML = '<p style="padding:20px;">No sheets found.</p>';
+                    loginError.textContent = 'No sheets found in the spreadsheet.';
                     return;
                 }
 
-                let firstBtn = null;
-                let firstGid = null;
+                allSheets = data.sheets.map(sheet => ({
+                    title: sheet.properties.title,
+                    gid: sheet.properties.sheetId
+                }));
 
-                data.sheets.forEach((sheet) => {
-                    const btn = document.createElement('button');
-                    btn.className = 'tab-btn';
-                    btn.textContent = sheet.properties.title;
-                    btn.onclick = () => loadSheet(sheet.properties.sheetId, btn);
-                    tabsContainer.appendChild(btn);
+                console.log('Loaded sheets from Google:', allSheets.map(s => s.title));
 
-                    if (!firstBtn) {
-                        firstBtn = btn;
-                        firstGid = sheet.properties.sheetId;
-                    }
-                });
+                loginLoading.style.display = 'none';
 
-                // Load the first sheet after all buttons exist
-                if (firstBtn && firstGid != null) {
-                    firstBtn.classList.add('active');
-                    loadSheet(firstGid, firstBtn);
-                }
-            } catch (e) {
-                tabsContainer.innerHTML = '<p style="color:red; padding:20px;">Error loading sheets. Check API key or internet.</p>';
-                console.error(e);
+            } catch (err) {
+                console.error(err);
+                loginLoading.style.display = 'none';
+                loginError.textContent = 'Failed to load sheets. Check internet or try again.';
             }
         }
 
-        function loadSheet(gid, btn) {
-            const iframe = document.getElementById('frame');
-            // Use the published embed URL + the correct gid
-            const newSrc = `https://docs.google.com/spreadsheets/d/e/${PUBLISHED_EMBED}/pubhtml?gid=${gid}&single=true&widget=true&headers=false&ts=${Date.now()}`;
+        // ==================== LOGIN LOGIC ====================
+        function findSheetByLastName(lastName) {
+            const search = lastName.trim().toLowerCase();
+            if (!search) return null;
 
-            console.log('Loading gid:', gid, 'src:', newSrc);
-
-            // Force the iframe to actually change by blanking it first
-            iframe.src = 'about:blank';
-            setTimeout(() => {
-                iframe.src = newSrc;
-            }, 40);
-
-            // Active tab styling
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            if (btn) btn.classList.add('active');
+            return allSheets.find(sheet => {
+                const title = sheet.title.trim();
+                const parts = title.split(/\s+/);
+                const last = parts[parts.length - 1].toLowerCase();
+                return last === search;
+            });
         }
 
-        // Start loading tabs dynamically
-        loadAllSheets();
+        function handleLogin() {
+            loginError.textContent = '';
+
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value.trim();
+
+            if (!username) {
+                loginError.textContent = 'Please enter your last name.';
+                return;
+            }
+
+            if (password !== '2026') {
+                loginError.textContent = 'Incorrect password. Use 2026.';
+                return;
+            }
+
+            const match = findSheetByLastName(username);
+
+            if (!match) {
+                loginError.textContent = `No sheet found for last name "${username}".`;
+                console.log('No match for last name:', username, 'Available last names:', allSheets.map(s => s.title.split(/\s+/).pop()));
+                return;
+            }
+
+            console.log('Login successful for:', username, '→', match.title);
+            showSheetViewer(match.title, match.gid);
+        }
+
+        // ==================== VIEWER ====================
+        function showSheetViewer(title, gid) {
+            console.log('=== Showing sheet viewer ===');
+            console.log('Title:', title);
+            console.log('GID:', gid);
+
+            if (!currentSheetNameEl || !iframe || !loginScreen || !viewerScreen) {
+                console.error('Viewer elements missing!');
+                alert('Technical error loading viewer. Hard refresh the page.');
+                return;
+            }
+
+            currentSheet = { title, gid };
+            currentSheetNameEl.textContent = title;
+
+            const src = `https://docs.google.com/spreadsheets/d/e/${PUBLISHED_EMBED}/pubhtml?gid=${gid}&single=true&widget=true&headers=false&ts=${Date.now()}`;
+            console.log('Loading iframe src:', src);
+
+            // Force reload
+            iframe.src = 'about:blank';
+            setTimeout(() => {
+                iframe.src = src;
+                console.log('Iframe src set.');
+            }, 50);
+
+            // Switch screens
+            loginScreen.style.display = 'none';
+            viewerScreen.style.display = 'flex';
+
+            console.log('Screen switched to viewer.');
+        }
+
+        function goBackToLogin() {
+            viewerScreen.style.display = 'none';
+            loginScreen.style.display = 'flex';
+
+            iframe.src = '';
+            currentSheet = null;
+
+            // clear inputs for next login
+            usernameInput.value = '';
+            passwordInput.value = '2026';
+            loginError.textContent = '';
+        }
+
+        // ==================== INIT ====================
+        function init() {
+            // Load sheets in background
+            loadSheets();
+
+            // Wire up login
+            loginBtn.addEventListener('click', handleLogin);
+
+            // Enter key on either field
+            [usernameInput, passwordInput].forEach(input => {
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        handleLogin();
+                    }
+                });
+            });
+
+            // Focus username on load
+            setTimeout(() => {
+                usernameInput.focus();
+                usernameInput.select();
+            }, 300);
+        }
+
+        // Start
+        init();
     </script>
 </body>
 </html>
