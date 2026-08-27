@@ -4,149 +4,369 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mister Tuxedo - Wedding Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&amp;family=Inter:wght@400;500;600&amp;display=swap');
-
-        :root { --navy: #0F172A; --gold: #C9A227; }
-        * { box-sizing: border-box; }
-        body, html { margin:0; padding:0; height:100%; font-family: 'Inter', system-ui, sans-serif; background:#f8fafc; color:#1e2937; }
-
-        .logo { max-width: 220px; height: auto; margin-bottom: 12px; }
-
+        :root { --navy:#0F172A; --gold:#C9A227; --gold-dark:#a68b1a; --muted:#64748b; --line:#e2e8f0; --ok:#15803d; --warn:#b45309; }
+        * { box-sizing:border-box; }
+        body, html { margin:0; padding:0; min-height:100%; font-family:'Inter', system-ui, sans-serif; background:#f8fafc; color:#1e2937; }
+        button { font-family:inherit; }
+        .logo { max-width:220px; height:auto; margin-bottom:12px; }
         #login-screen { min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:40px 20px; text-align:center; }
         .selector-header { margin-bottom:40px; }
         .selector-header h1 { font-family:'Playfair Display', Georgia, serif; font-size:42px; color:var(--navy); margin:8px 0; font-weight:700; }
-        .selector-header p { color:#64748b; font-size:18px; margin:0; }
-
-        .login-box { background:white; border-radius:16px; padding:32px 28px; max-width:340px; width:100%; box-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1); text-align:left; }
+        .selector-header p { color:var(--muted); font-size:18px; margin:0; }
+        .login-box { background:#fff; border-radius:16px; padding:32px 28px; max-width:360px; width:100%; box-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1); text-align:left; }
         .login-box h3 { margin:0 0 8px; color:var(--navy); font-size:22px; text-align:center; }
-        .login-box .login-hint { font-size:14px; color:#64748b; text-align:center; margin-bottom:20px; }
+        .login-hint { font-size:14px; color:var(--muted); text-align:center; margin:0 0 20px; }
         .login-box input { width:100%; padding:14px; font-size:16px; border:2px solid #cbd5e1; border-radius:10px; margin-bottom:12px; }
         .login-box input:focus { outline:none; border-color:var(--gold); }
-        .btn-primary { width:100%; background:var(--gold); color:white; padding:14px; font-size:16px; font-weight:600; border:none; border-radius:10px; cursor:pointer; margin-top:8px; }
-        .btn-primary:hover { background:#a68b1a; }
-
-        #viewer-screen { display:none; flex-direction:column; height:100vh; width:100%; position:fixed; top:0; left:0; z-index:50; background:#f8fafc; }
-        .viewer-header { background:var(--navy); color:white; padding:16px 24px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
-        .viewer-header .left { display:flex; align-items:center; gap:16px; }
-        .viewer-header .back-btn { background:#334155; color:white; border:none; padding:8px 16px; border-radius:8px; font-weight:600; cursor:pointer; font-size:14px; }
-        .viewer-header .current { font-size:18px; font-weight:600; }
-        .viewer-header .current span { color:var(--gold); }
-
-        iframe { flex:1; width:100%; border:none; background:white; }
+        .btn-primary { width:100%; background:var(--gold); color:#fff; padding:14px; font-size:16px; font-weight:600; border:none; border-radius:10px; cursor:pointer; }
+        .btn-primary:hover { background:var(--gold-dark); }
+        .btn-ghost { background:#334155; color:#fff; border:none; padding:8px 16px; border-radius:8px; font-weight:600; cursor:pointer; font-size:14px; }
         .error { color:#dc2626; font-size:13px; margin-top:8px; min-height:18px; text-align:center; }
-        .loading { color:#64748b; padding:12px 0; font-size:14px; text-align:center; }
+        .loading { color:var(--muted); padding:12px 0; font-size:14px; text-align:center; }
+        .app { display:none; flex-direction:column; min-height:100vh; }
+        .top { background:var(--navy); color:#fff; padding:14px 20px; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+        .top .left { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+        .top h2 { margin:0; font-size:18px; font-weight:600; }
+        .top h2 span { color:var(--gold); }
+        .wrap { max-width:960px; width:100%; margin:0 auto; padding:24px 20px 48px; }
+        .meta { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; margin-bottom:20px; }
+        .card { background:#fff; border:1px solid var(--line); border-radius:12px; padding:16px; }
+        .card .k { font-size:11px; letter-spacing:.04em; text-transform:uppercase; color:var(--muted); margin-bottom:4px; }
+        .card .v { font-size:16px; font-weight:600; color:var(--navy); }
+        .progress { background:#fff; border:1px solid var(--line); border-radius:12px; padding:16px 18px; margin-bottom:20px; }
+        .progress-bar { height:10px; background:#e2e8f0; border-radius:99px; overflow:hidden; margin-top:10px; }
+        .progress-bar > i { display:block; height:100%; background:var(--gold); width:0; }
+        .actions { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:20px; }
+        .btn-link { display:inline-block; background:var(--navy); color:#fff; text-decoration:none; padding:12px 18px; border-radius:10px; font-weight:600; font-size:14px; }
+        .btn-link:hover { background:#1e293b; }
+        table { width:100%; border-collapse:collapse; background:#fff; border-radius:12px; overflow:hidden; border:1px solid var(--line); }
+        th, td { text-align:left; padding:12px 14px; font-size:14px; }
+        th { background:#f1f5f9; color:var(--navy); font-size:12px; text-transform:uppercase; letter-spacing:.04em; }
+        tr + tr td { border-top:1px solid var(--line); }
+        .pill { display:inline-block; padding:4px 10px; border-radius:99px; font-size:12px; font-weight:600; }
+        .pill.ok { background:#dcfce7; color:var(--ok); }
+        .pill.miss { background:#ffedd5; color:var(--warn); }
+        .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:12px; }
+        .wedding { cursor:pointer; text-align:left; border:1px solid var(--line); background:#fff; border-radius:12px; padding:16px; }
+        .wedding:hover { border-color:var(--gold); }
+        .wedding h3 { margin:0 0 6px; color:var(--navy); font-size:18px; }
+        .wedding .pct { font-size:13px; color:var(--muted); }
+        .search { width:100%; max-width:320px; padding:12px 14px; border:2px solid #cbd5e1; border-radius:10px; font-size:15px; margin-bottom:16px; }
+        .empty { color:var(--muted); padding:24px; text-align:center; }
+        @media (max-width:560px) {
+            .selector-header h1 { font-size:32px; }
+            th:nth-child(3), td:nth-child(3) { display:none; }
+        }
+        @media print {
+            .top, .actions, .search { display:none !important; }
+            body { background:#fff; }
+        }
     </style>
 </head>
 <body>
-
     <div id="login-screen">
         <div class="selector-header">
             <img src="MT_2018_logo_w_Words_png.png" alt="Mister Tuxedo Logo" class="logo">
             <h1>Mister Tuxedo</h1>
             <p>Wedding Measurement Portal</p>
         </div>
-
         <div class="login-box">
             <h3>Sign In</h3>
             <p class="login-hint">Enter your <strong>last name</strong> and password <strong>2026</strong></p>
-
-            <input type="text" id="username-input" placeholder="Last name (e.g. Blair)">
-            <input type="password" id="password-input" value="2026">
-
+            <input type="text" id="username-input" placeholder="Last name (e.g. Blair)" autocomplete="username">
+            <input type="password" id="password-input" value="2026" autocomplete="current-password">
             <button id="login-btn" class="btn-primary">Access Sheet</button>
             <div class="error" id="login-error"></div>
-            <div class="loading" id="login-loading" style="display:none;">Loading sheets...</div>
+            <div class="loading" id="login-loading" style="display:none;">Loading weddings...</div>
         </div>
     </div>
 
-    <div id="viewer-screen">
-        <div class="viewer-header">
+    <div class="app" id="app-screen">
+        <div class="top">
             <div class="left">
-                <button class="back-btn" onclick="goBackToLogin()">← Logout</button>
-                <div class="current">Viewing: <span id="current-sheet-name"></span></div>
+                <button class="btn-ghost" id="back-btn" type="button">← Back</button>
+                <h2 id="app-title">Viewing: <span></span></h2>
             </div>
         </div>
-        <iframe id="sheet-frame" src=""></iframe>
+        <div class="wrap" id="app-body"></div>
     </div>
 
-    <script>
-        const API_KEY = "AIzaSyCEoZRtTKBA5ICMIwATMOKCpx7rNr-k104";
-        const SPREADSHEET_ID = "1T3wznvxT6l5TdCljmDpubGjD_P4zAQBer0AmBReqzWs";
-        const PUBLISHED_EMBED = "2PACX-1vQvuBsEBtbigks43L98FinwZM70uM9iMzbpzBv40guW9Sso4rVfvp10OeVmQZIpUHPSGIgVtz07bffm";
+<script>
+const API_KEY = "AIzaSyCEoZRtTKBA5ICMIwATMOKCpx7rNr-k104";
+const SPREADSHEET_ID = "1T3wznvxT6l5TdCljmDpubGjD_P4zAQBer0AmBReqzWs";
+const MEASURE_URL = "https://mistertuxedodallas.com/measurements";
+const PASSWORD = "2026";
+const STAFF_LOGINS = new Set(["staff", "admin", "mistertuxedo"]);
+const SKIP_TABS = new Set(["master submissions", "wedding_reference", "c"]);
 
-        let allSheets = [];
+let allSheets = [];
+let viewStack = [];
 
-        const loginScreen = document.getElementById('login-screen');
-        const viewerScreen = document.getElementById('viewer-screen');
-        const usernameInput = document.getElementById('username-input');
-        const passwordInput = document.getElementById('password-input');
-        const loginBtn = document.getElementById('login-btn');
-        const loginError = document.getElementById('login-error');
-        const loginLoading = document.getElementById('login-loading');
-        const currentSheetNameEl = document.getElementById('current-sheet-name');
-        const iframe = document.getElementById('sheet-frame');
+const loginScreen = document.getElementById("login-screen");
+const appScreen = document.getElementById("app-screen");
+const appBody = document.getElementById("app-body");
+const appTitle = document.getElementById("app-title");
+const usernameInput = document.getElementById("username-input");
+const passwordInput = document.getElementById("password-input");
+const loginBtn = document.getElementById("login-btn");
+const loginError = document.getElementById("login-error");
+const loginLoading = document.getElementById("login-loading");
 
-        async function loadSheets() {
-            loginLoading.style.display = 'block';
-            try {
-                const res = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}?key=${API_KEY}`);
-                const data = await res.json();
-                allSheets = data.sheets.map(s => ({ title: s.properties.title, gid: s.properties.sheetId }));
-                loginLoading.style.display = 'none';
-            } catch (e) {
-                loginLoading.style.display = 'none';
-                loginError.textContent = 'Failed to load sheets.';
-            }
+function isSkipped(title) {
+    const t = title.trim().toLowerCase();
+    return SKIP_TABS.has(t) || t.length <= 1;
+}
+
+function weddingSheets() {
+    return allSheets.filter(s => !isSkipped(s.title));
+}
+
+async function loadSheets() {
+    loginLoading.style.display = "block";
+    try {
+        const res = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}?fields=sheets.properties&key=${API_KEY}`);
+        const data = await res.json();
+        if (!res.ok || data.error) throw new Error((data.error && data.error.message) || "Could not read the workbook.");
+        allSheets = (data.sheets || []).map(s => ({ title: s.properties.title, gid: s.properties.sheetId }));
+        loginLoading.style.display = "none";
+    } catch (e) {
+        loginLoading.style.display = "none";
+        loginError.textContent = "Failed to load weddings. Try again in a moment.";
+    }
+}
+
+function findSheetByLastName(name) {
+    const search = name.trim().toLowerCase();
+    const sheets = weddingSheets();
+    return sheets.find(s => s.title.trim().toLowerCase() === search)
+        || sheets.find(s => s.title.trim().split(/\s+/).pop().toLowerCase() === search);
+}
+
+function cell(rows, r, c) {
+    const row = rows[r] || [];
+    return (row[c] || "").toString().trim();
+}
+
+function parseWedding(title, rows) {
+    const guests = [];
+    for (let i = 13; i < rows.length; i++) {
+        const name = cell(rows, i, 3);
+        if (!name) continue;
+        if (/^(full name|attendant)/i.test(name)) continue;
+        const size = cell(rows, i, 6);
+        guests.push({ name, size, measured: Boolean(size) });
+    }
+    guests.sort((a, b) => Number(a.measured) - Number(b.measured) || a.name.localeCompare(b.name));
+    const measured = guests.filter(g => g.measured).length;
+    return {
+        title,
+        groom: cell(rows, 0, 3) || title,
+        eventDate: cell(rows, 1, 3),
+        pickup: cell(rows, 1, 7) || cell(rows, 1, 5),
+        venue: cell(rows, 2, 3),
+        planner: cell(rows, 2, 7) || cell(rows, 2, 4),
+        coat: cell(rows, 4, 3),
+        guests,
+        measured,
+        total: guests.length
+    };
+}
+
+async function fetchValues(range) {
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${encodeURIComponent(range)}?key=${API_KEY}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    if (!res.ok || data.error) throw new Error((data.error && data.error.message) || "Sheet read failed.");
+    return data.values || [];
+}
+
+async function fetchMany(ranges) {
+    if (!ranges.length) return [];
+    const params = ranges.map(r => "ranges=" + encodeURIComponent(r)).join("&");
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values:batchGet?${params}&key=${API_KEY}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    if (!res.ok || data.error) throw new Error((data.error && data.error.message) || "Sheet read failed.");
+    return data.valueRanges || [];
+}
+
+function showApp() {
+    loginScreen.style.display = "none";
+    appScreen.style.display = "flex";
+}
+
+function goLogin() {
+    viewStack = [];
+    appScreen.style.display = "none";
+    loginScreen.style.display = "flex";
+    appBody.innerHTML = "";
+    usernameInput.value = "";
+    passwordInput.value = PASSWORD;
+    loginError.textContent = "";
+    usernameInput.focus();
+}
+
+function setTitle(text, gold) {
+    appTitle.innerHTML = gold ? `${text}: <span>${gold}</span>` : text;
+}
+
+function metaCard(k, v) {
+    if (!v) return "";
+    return `<div class="card"><div class="k">${k}</div><div class="v">${esc(v)}</div></div>`;
+}
+
+function esc(s) {
+    return String(s).replace(/[&<>"']/g, ch => ({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" }[ch]));
+}
+
+function renderWedding(w, { staff } = {}) {
+    const pct = w.total ? Math.round((w.measured / w.total) * 100) : 0;
+    setTitle("Viewing", w.groom || w.title);
+    document.getElementById("back-btn").textContent = staff ? "← All weddings" : "← Logout";
+    appBody.innerHTML = `
+        <div class="meta">
+            ${metaCard("Groom / event", w.groom)}
+            ${metaCard("Event date", w.eventDate)}
+            ${metaCard("Venue", w.venue)}
+            ${metaCard("Pick-up", w.pickup)}
+            ${metaCard("Planner", w.planner)}
+            ${metaCard("Coat", w.coat)}
+        </div>
+        <div class="progress">
+            <strong>${w.measured} of ${w.total}</strong> guests have a coat size
+            <div class="progress-bar"><i style="width:${pct}%"></i></div>
+        </div>
+        <div class="actions">
+            <a class="btn-link" href="${MEASURE_URL}" target="_blank" rel="noopener">Send measurements</a>
+        </div>
+        ${w.guests.length ? `
+        <table>
+            <thead><tr><th>Name</th><th>Coat size</th><th>Status</th></tr></thead>
+            <tbody>
+                ${w.guests.map(g => `<tr>
+                    <td>${esc(g.name)}</td>
+                    <td>${esc(g.size || "—")}</td>
+                    <td><span class="pill ${g.measured ? "ok" : "miss"}">${g.measured ? "Measured" : "Missing"}</span></td>
+                </tr>`).join("")}
+            </tbody>
+        </table>` : `<div class="empty">No guests on this list yet.</div>`}
+    `;
+}
+
+async function openWedding(sheet, { staff } = {}) {
+    appBody.innerHTML = `<div class="loading">Loading ${esc(sheet.title)}...</div>`;
+    showApp();
+    try {
+        const rows = await fetchValues(`${sheet.title}!A1:H200`);
+        renderWedding(parseWedding(sheet.title, rows), { staff });
+    } catch (e) {
+        appBody.innerHTML = `<div class="error">Could not load this wedding.</div>`;
+    }
+}
+
+function summarizeGuests(rows) {
+    let total = 0, measured = 0;
+    const groom = ((rows[0] || [])[0] || "").toString().trim();
+    let start = 13;
+    for (let i = 0; i < rows.length; i++) {
+        const d = ((rows[i] || [])[0] || "").toString().trim();
+        if (/^full name$/i.test(d)) { start = i + 1; break; }
+    }
+    for (let i = start; i < rows.length; i++) {
+        const name = ((rows[i] || [])[0] || "").toString().trim();
+        if (!name || /^(full name|attendant)/i.test(name)) continue;
+        total++;
+        if (((rows[i] || [])[3] || "").toString().trim()) measured++;
+    }
+    return { groom, total, measured };
+}
+
+async function renderStaff() {
+    setTitle("Staff", "All weddings");
+    document.getElementById("back-btn").textContent = "← Logout";
+    appBody.innerHTML = `<div class="loading">Loading every wedding...</div>`;
+    showApp();
+    const sheets = weddingSheets();
+    const ranges = sheets.map(s => `${s.title}!D1:G200`);
+    const chunk = 20;
+    const summaries = [];
+    try {
+        for (let i = 0; i < ranges.length; i += chunk) {
+            const part = await fetchMany(ranges.slice(i, i + chunk));
+            part.forEach((vr, idx) => {
+                const sheet = sheets[i + idx];
+                const rows = vr.values || [];
+                const stats = summarizeGuests(rows);
+                summaries.push({ sheet, ...stats });
+            });
         }
+    } catch (e) {
+        appBody.innerHTML = `<div class="error">Could not load the staff overview.</div>`;
+        return;
+    }
+    summaries.sort((a, b) => {
+        const ap = a.total ? a.measured / a.total : 1;
+        const bp = b.total ? b.measured / b.total : 1;
+        return ap - bp || a.sheet.title.localeCompare(b.sheet.title);
+    });
+    appBody.innerHTML = `
+        <input class="search" id="staff-search" placeholder="Search weddings">
+        <div class="grid" id="staff-grid">
+            ${summaries.map((s, n) => {
+                const pct = s.total ? Math.round((s.measured / s.total) * 100) : 0;
+                return `<button class="wedding" data-i="${n}" type="button">
+                    <h3>${esc(s.sheet.title)}</h3>
+                    <div class="pct">${esc(s.groom && s.groom !== s.sheet.title ? s.groom : "")}</div>
+                    <div class="pct">${s.measured}/${s.total} measured · ${pct}%</div>
+                    <div class="progress-bar"><i style="width:${pct}%"></i></div>
+                </button>`;
+            }).join("")}
+        </div>`;
+    appBody.querySelectorAll(".wedding").forEach(btn => {
+        btn.onclick = () => {
+            const s = summaries[Number(btn.dataset.i)];
+            viewStack.push("staff");
+            openWedding(s.sheet, { staff: true });
+        };
+    });
+    const search = document.getElementById("staff-search");
+    search.oninput = () => {
+        const q = search.value.trim().toLowerCase();
+        appBody.querySelectorAll(".wedding").forEach(btn => {
+            btn.style.display = btn.textContent.toLowerCase().includes(q) ? "" : "none";
+        });
+    };
+}
 
-        function findSheetByLastName(name) {
-            const search = name.trim().toLowerCase();
-            return allSheets.find(s => s.title.trim().split(/\s+/).pop().toLowerCase() === search);
-        }
+function handleLogin() {
+    loginError.textContent = "";
+    const user = usernameInput.value.trim();
+    const pass = passwordInput.value.trim();
+    if (!user) { loginError.textContent = "Enter your last name."; return; }
+    if (pass !== PASSWORD) { loginError.textContent = "Password is 2026."; return; }
+    if (STAFF_LOGINS.has(user.toLowerCase())) {
+        viewStack = [];
+        renderStaff();
+        return;
+    }
+    const match = findSheetByLastName(user);
+    if (!match) { loginError.textContent = `No sheet for "${user}".`; return; }
+    viewStack = [];
+    openWedding(match, { staff: false });
+}
 
-        function handleLogin() {
-            loginError.textContent = '';
-            const user = usernameInput.value.trim();
-            const pass = passwordInput.value.trim();
-
-            if (!user) { loginError.textContent = 'Enter your last name.'; return; }
-            if (pass !== '2026') { loginError.textContent = 'Password is 2026.'; return; }
-
-            const match = findSheetByLastName(user);
-            if (!match) { loginError.textContent = `No sheet for "${user}".`; return; }
-
-            showViewer(match.title, match.gid);
-        }
-
-        function showViewer(title, gid) {
-            currentSheetNameEl.textContent = title;
-            const src = `https://docs.google.com/spreadsheets/d/e/${PUBLISHED_EMBED}/pubhtml?gid=${gid}&single=true&widget=true&headers=false`;
-            iframe.src = 'about:blank';
-            setTimeout(() => iframe.src = src, 50);
-            loginScreen.style.display = 'none';
-            viewerScreen.style.display = 'flex';
-        }
-
-        function goBackToLogin() {
-            viewerScreen.style.display = 'none';
-            loginScreen.style.display = 'flex';
-            iframe.src = '';
-            usernameInput.value = '';
-            passwordInput.value = '2026';
-            loginError.textContent = '';
-        }
-
-        function init() {
-            loadSheets();
-            loginBtn.onclick = handleLogin;
-            [usernameInput, passwordInput].forEach(el => el.addEventListener('keydown', e => e.key === 'Enter' && handleLogin()));
-            setTimeout(() => usernameInput.focus(), 300);
-        }
-
-        init();
-    </script>
-</body>
-</html>
+document.getElementById("back-btn").onclick = () => {
+    if (viewStack.pop() === "staff") renderStaff();
+    else goLogin();
+};
+loginBtn.onclick = handleLogin;
+[usernameInput, passwordInput].forEach(el => el.addEventListener("keydown", e => e.key === "Enter" && handleLogin()));
+loadSheets();
+setTimeout(() => usernameInput.focus(), 300);
+</script>
 </body>
 </html>
